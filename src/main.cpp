@@ -2,7 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1331.h>
 #include <SPI.h>
-
+//#include <String.h>
 //color definitions for OLED SPI screen SSD1331 
 #define BLACK   0x0000
 #define BLUE    0x001F
@@ -53,7 +53,7 @@ void setHeaders()
   screen.setCursor(0,33);
   screen.print("Soil");
   screen.setCursor(47, 33);
-  screen.print("Info");
+  screen.print("Message");
 }
 /*
 This will redraw only the text under the 
@@ -63,17 +63,17 @@ that only the area that needs to be updated
 on the screen will be redrawn
 */
 template <class T>
-void clear(T colorBackground, T colorText , int oldText)
+void clear(T colorBackground, T colorText, int eraseTemp, int eraseHum, int eraseSoil, char eraseMsg[])
 {
   screen.setTextColor(colorBackground,colorBackground);
-  screen.setCursor(0,45);
-  screen.print(oldText);
-  screen.setCursor(0, 12);
-  screen.print(oldText);
-  screen.setCursor(47,12);
-  screen.print(oldText);
-  screen.setCursor(47,45);
-  screen.print(oldText);
+  screen.setCursor(0,45); //TEMP 
+  screen.print(eraseTemp);
+  screen.setCursor(0, 12); //HUM
+  screen.print(eraseHum);
+  screen.setCursor(47,12); // SOIL 
+  screen.print(eraseSoil);
+  screen.setCursor(47,45); // MESSAGE
+  screen.print(eraseMsg);
 }
 /*
 This will update the values under the headers
@@ -86,25 +86,21 @@ there is a change
 template <class T>
 void update(T colorBackground, T colorText)
 {
-  //delay(30);
-  int oldNumber = analogRead(SOILMOISTURE); // takes first reading
+  int soilMoistureReadingBefore = analogRead(SOILMOISTURE); // takes soil moisture 
+  int humidityReadingBefore = analogRead(DHT11);
+  int tempReadingBefore = analogRead(DHT11);
   screen.setTextColor(colorText, colorBackground);
-  screen.setCursor(0,45);
-  screen.print(oldNumber);
-  screen.setCursor(0, 12);
-  screen.print(oldNumber);
-  screen.setCursor(47,12);
-  screen.print(oldNumber);
-  screen.setCursor(47,45);
-  screen.print(oldNumber);
-  //delay(30);
+  screen.setCursor(0,45); //TEMP
+  screen.print(tempReadingBefore);
+  screen.setCursor(0, 12); //HUM
+  screen.print(humidityReadingBefore);
+  screen.setCursor(47,12); //SOIL
+  screen.print(soilMoistureReadingBefore);
+  screen.setCursor(47,45); //MESSAGE
+  screen.print("This is a message");
 
-  int soilMoistureValue = analogRead(SOILMOISTURE); //compares it
-
-  //delay(500);
- 
-
-  if(soilMoistureValue > oldNumber + 5 || soilMoistureValue < oldNumber - 5) // if there is a change then will update
+  //int soilMoistureValue = analogRead(SOILMOISTURE); //compares it
+  if(/*bool function that that detects a change in a value to the sensors */) //need bool function when change is detected in any of the sesors
   {
     clear(colorBackground, colorText, oldNumber);
     screen.setTextColor(colorText);
@@ -117,7 +113,6 @@ void update(T colorBackground, T colorText)
     screen.setCursor(47,45);
     screen.print(soilMoistureValue);
   }
-  //delay(30);
 }
 
 
@@ -131,8 +126,6 @@ void setup()
   setHeaders();
   update(BLACK,GREEN);
 
-
-
   //Pinmodes
   pinMode(LEDGREEN, OUTPUT);
   pinMode(LEDBLUE, OUTPUT);
@@ -142,7 +135,5 @@ void setup()
 
 void loop() 
 {
-  //delay(500);
   update(BLACK,GREEN);
-  
 }
