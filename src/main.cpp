@@ -115,6 +115,22 @@ void update(T colorBackground, T colorText)
   }
 }
 
+bool detectChange()
+{
+  int initialSoilReading = analogRead(SOILMOISTURE);
+  int initialHumidityReading = analogRead(DHT11);
+  int intitialTempReading = analogRead(DHT11);
+
+  int secondSoilReading;
+  int secondHumidityReading;
+  int secondTempReading;
+
+  bool ret = false;
+  while(ret == false)
+  {
+    
+  }
+}
 
 void setup() 
 {
