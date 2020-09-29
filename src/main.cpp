@@ -37,6 +37,8 @@
 //create display
 Adafruit_SSD1331 screen = Adafruit_SSD1331(OLEDCS, OLEDDC, OLEDSDA, OLEDSCL, OLEDRES);
 /*
+
+
 This function will print the headers 
 on the screen
 over the values over the values that
@@ -51,9 +53,21 @@ void setHeaders()
   screen.setCursor(47,0);
   screen.print("Hum");
   screen.setCursor(0,33);
+  
   screen.print("Soil");
   screen.setCursor(47, 33);
   screen.print("Message");
+}
+/*
+bool function that that detects a change in a value to the sensors,
+it is meant to be used in a comparison and makes the determination
+*/
+bool detectChange(int oldSoilReading, int oldHumidityReading, int oldTempReading)
+{
+  int newSoilReading = analogRead(SOILMOISTURE);
+  int oldHumReading = analogRead(DHT11);
+  int oldTempReading;
+
 }
 /*
 This will redraw only the text under the 
@@ -102,7 +116,7 @@ void update(T colorBackground, T colorText)
   //int soilMoistureValue = analogRead(SOILMOISTURE); //compares it
   if(/*bool function that that detects a change in a value to the sensors */) //need bool function when change is detected in any of the sesors
   {
-    clear(colorBackground, colorText, oldNumber);
+    clear(colorBackground, colorText, oldNumber); //
     screen.setTextColor(colorText);
     screen.setCursor(0,45);
     screen.print(soilMoistureValue);
@@ -115,7 +129,7 @@ void update(T colorBackground, T colorText)
   }
 }
 
-bool detectChange()
+/*bool detectChange()
 {
   int initialSoilReading = analogRead(SOILMOISTURE);
   int initialHumidityReading = analogRead(DHT11);
@@ -130,7 +144,7 @@ bool detectChange()
   {
     
   }
-}
+}*/
 
 void setup() 
 {
@@ -143,10 +157,10 @@ void setup()
   update(BLACK,GREEN);
 
   //Pinmodes
-  pinMode(LEDGREEN, OUTPUT);
-  pinMode(LEDBLUE, OUTPUT);
-  pinMode(LEDRED, OUTPUT);
-  pinMode(SOILMOISTURE, INPUT);
+  //pinMode(LEDGREEN, OUTPUT);
+  //pinMode(LEDBLUE, OUTPUT);
+  //pinMode(LEDRED, OUTPUT);
+  //pinMode(SOILMOISTURE, INPUT);
 }
 
 void loop() 
