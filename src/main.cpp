@@ -4,6 +4,7 @@
 #include <SPI.h>
 #include <Adafruit_I2CDevice.h>
 //#include <String.h>
+#include <DHT_U.h>
 
 //color definitions for OLED SPI screen SSD1331 
 #define BLACK   0x0000
@@ -21,6 +22,8 @@
 #define OLEDRES 8
 #define OLEDSDA A4
 #define OLEDSCL A5
+
+#define DHT11PIN 4
 
 //create display
 Adafruit_SSD1331 screen = Adafruit_SSD1331(OLEDCS, OLEDDC, OLEDSDA, OLEDSCL, OLEDRES);
@@ -102,27 +105,121 @@ void changeMessageOnScreen(T colorText, char* message)
   screen.setCursor(47,45);
   screen.print(message);
 }
+void readDHT11(float* temperature, float* humidity, DHT dht)
+{
+  //DHT dht(DHT11PIN, DHT11);
+  float c = dht.readTemperature();
+  float f = dht.readTemperature(true);
+  float h = dht.readHumidity();
+  
+  if (isnan(h) || isnan(c) || isnan(f))
+  {
+    char err[] = "Could not read DHT11";
+    changeHumOnScreen(RED, '*');
+    changeTempOnScreen(RED, '*');
+    changeMessageOnScreen(RED,err);
+    return;
+  }
+  else if(f == *temperature || h == *humidity)
+  return;
+  else
+  {
+    changeTempOnScreen(BLUE,*temperature);
+    changeHumOnScreen(BLUE, *humidity);
+    *temperature = f;
+    *humidity = h;
+    changeHumOnScreen(WHITE, *humidity);
+    changeTempOnScreen(WHITE, *temperature);
+  }
+  
+  
+}
 
+DHT dht(DHT11PIN, DHT11);
 void setup()
 {
+  //float* humAddr;
+  //float* tempAddr;
+  //float hum;
+  //float temp;
+  //humAddr = &hum;
+  //tempAddr = &temp;
+  dht.begin();
+  Serial.begin(9600);
   screen.begin();
   screen.setFont();
-  screen.fillScreen(RED);
-  screen.setTextColor(YELLOW);
+  screen.fillScreen(BLUE);
+  screen.setTextColor(WHITE);
   setHeaders();
 }
-void loop()
+
+
+ void loop()
 {
-  char str[] = "WARNING!";
-  sendValuesToScreen(GREEN,1,2,3, str);
-  delay(500);
+  //delay(2000);
+  float* humAddr;
+  float* tempAddr;
+  float hum;
+  float temp;
+  humAddr = &hum;
+  tempAddr = &temp;
+  while(true)
+  {
+    delay(2000);
+    readDHT11(tempAddr, humAddr, dht);
+  }
+  
+  //temp = 0;
+  //hum = 0;
+  //delay(2000);
+  //readDHT11(temp, hum, dht);
+  //char str[] = "Test1";
+  //sendValuesToScreen(BLACK,94,2,3, str);
+  //delay(500);
   //sendValuesToScreen(RED,1,2,3, str);
   //delay(500);
-  changeTempOnScreen(RED,1);
+  //changeTempOnScreen(BLUE,1);
   //delay(500);
-  changeTempOnScreen(BLACK, 94);
-  delay(500);
-  changeTempOnScreen(RED, 94);
+  //changeTempOnScreen(BLUE, 94);
+  //delay(500);
+  //changeTempOnScreen(BLACK, 94);
   //delay(500);
 
+
+  //delay(2000);
+  //sendValuesToScreen(WHITE, dht.readTemperature(true), dht.readHumidity(),0,str);
+  /*
+  //hum = dht.readHum 
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float h = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Read temperature as Fahrenheit (isFahrenheit = true)
+  float f = dht.readTemperature(true);
+
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  }
+
+  // Compute heat index in Fahrenheit (the default)
+  float hif = dht.computeHeatIndex(f, h);
+  // Compute heat index in Celsius (isFahreheit = false)
+  float hic = dht.computeHeatIndex(t, h, false);
+
+  Serial.print(F("Humidity: "));
+  Serial.print(h);
+  Serial.print(F("%  Temperature: "));
+  Serial.print(t);
+  Serial.print(F("°C "));
+  Serial.print(f);
+  Serial.print(F("°F  Heat index: "));
+  Serial.print(hic);
+  Serial.print(F("°C "));
+  Serial.print(hif);
+  Serial.println(F("°F"));
+*/  
 }
+
