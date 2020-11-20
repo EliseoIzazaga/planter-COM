@@ -105,9 +105,14 @@ void changeMessageOnScreen(T colorText, char* message)
   screen.setCursor(47,45);
   screen.print(message);
 }
+/*
+will read from DHT11 and print on screen if different from the last reading
+it uses pointers, and may need to be rewritten to accomodate the arduino's nature
+this was written with the implication that the arduino was going to handle global
+variables well but it does not.... (continued in loop())
+*/
 void readDHT11(float* temperature, float* humidity, DHT dht)
 {
-  //DHT dht(DHT11PIN, DHT11);
   float c = dht.readTemperature();
   float f = dht.readTemperature(true);
   float h = dht.readHumidity();
@@ -130,20 +135,12 @@ void readDHT11(float* temperature, float* humidity, DHT dht)
     *humidity = h;
     changeHumOnScreen(WHITE, *humidity);
     changeTempOnScreen(WHITE, *temperature);
-  }
-  
-  
+  }  
 }
 
 DHT dht(DHT11PIN, DHT11);
 void setup()
 {
-  //float* humAddr;
-  //float* tempAddr;
-  //float hum;
-  //float temp;
-  //humAddr = &hum;
-  //tempAddr = &temp;
   dht.begin();
   Serial.begin(9600);
   screen.begin();
@@ -152,11 +149,14 @@ void setup()
   screen.setTextColor(WHITE);
   setHeaders();
 }
-
-
  void loop()
 {
   //delay(2000);
+  /*
+  given what we have we essentially made an infinite loop within a loop, an idea is to make a button
+  that turns off and on the DHT11, but for now it works well and we will leave it as is unless some
+  one else has a better idea of how to handle this.
+  */
   float* humAddr;
   float* tempAddr;
   float hum;
