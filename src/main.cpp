@@ -155,7 +155,7 @@ void setup()
   /*
   given what we have we essentially made an infinite loop within a loop, an idea is to make a button
   that turns off and on the DHT11, but for now it works well and we will leave it as is unless some
-  one else has a better idea of how to handle this.
+  one else has a better idea of how to handle this. this may work in our favor for mqtt
   */
   float* humAddr;
   float* tempAddr;
